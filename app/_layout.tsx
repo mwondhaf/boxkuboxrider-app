@@ -1,8 +1,3 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -18,7 +13,7 @@ import {
 import "react-native-reanimated";
 import "../global.css";
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import Providers from "@/components/integrations/Providers";
 import type { Status } from "@/hooks/use-location";
 import {
   getForegroundPermissionsAsync,
@@ -31,7 +26,6 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [status, setStatus] = useState<Status>("undetermined");
   const [checking, setChecking] = useState(false);
   const mounted = useRef(true);
@@ -94,7 +88,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <Providers>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
@@ -135,7 +129,7 @@ export default function RootLayout() {
           </View>
         </View>
       ) : null}
-    </ThemeProvider>
+    </Providers>
   );
 }
 
