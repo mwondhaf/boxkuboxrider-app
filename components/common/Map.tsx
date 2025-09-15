@@ -50,7 +50,7 @@ const MapScreen = () => {
         followZoomLevel={INITIAL_ZOOM}
       />
       <LocationPuck
-        puckBearing="heading"
+        puckBearing="course"
         puckBearingEnabled
         visible={hasLocationPermission}
       />

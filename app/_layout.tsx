@@ -1,34 +1,24 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import {
-  AppState,
-  Linking,
-  LogBox,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { LogBox, Pressable, StyleSheet, Text, View } from "react-native";
 import "react-native-reanimated";
 import "../global.css";
 
 import Providers from "@/components/integrations/Providers";
-import type { Status } from "@/hooks/use-location";
-import {
-  getForegroundPermissionsAsync,
-  requestForegroundPermissionsAsync,
-} from "expo-location";
-import { useEffect, useRef, useState } from "react";
+import useLocation from "@/hooks/use-location";
+import { useState } from "react";
 
 export const unstable_settings = {
   anchor: "(tabs)",
 };
 
 export default function RootLayout() {
-  const [status, setStatus] = useState<Status>("undetermined");
+  const { status, requestPermission, openSettings } = useLocation({
+    autoStart: false,
+    listenAppState: true,
+  });
   const [checking, setChecking] = useState(false);
-  const mounted = useRef(true);
+  const user = null;
 
   // Suppress benign NativeEventEmitter warnings from some libraries.
   LogBox.ignoreLogs([
@@ -36,61 +26,22 @@ export default function RootLayout() {
     "new NativeEventEmitter() was called with a non-null argument without the required `removeListeners` method.",
   ]);
 
-  const openSettings = async () => {
-    if (Platform.OS === "ios") {
-      await Linking.openURL("app-settings:");
-    } else {
-      await Linking.openSettings();
-    }
-  };
-
   const retry = async () => {
     try {
       setChecking(true);
-      const { status: next } = await requestForegroundPermissionsAsync();
-      setStatus(next as Status);
+      await requestPermission();
     } finally {
       setChecking(false);
     }
   };
 
-  useEffect(() => {
-    mounted.current = true;
-    (async () => {
-      const { status: current } = await getForegroundPermissionsAsync();
-      if (mounted.current) {
-        setStatus(current as Status);
-      }
-    })();
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
-
-  // Refresh permission when app returns to foreground (e.g., after user opens Settings)
-  useEffect(() => {
-    const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") {
-        getForegroundPermissionsAsync()
-          .then(({ status: current }) => {
-            if (mounted.current) {
-              setStatus(current as Status);
-            }
-          })
-          .catch(() => {
-            // no-op
-          });
-      }
-    });
-    return () => {
-      sub.remove();
-    };
-  }, []);
-
   return (
     <Providers>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Protected guard={user !== null}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen
           name="modal"
           options={{ presentation: "modal", title: "Modal" }}
