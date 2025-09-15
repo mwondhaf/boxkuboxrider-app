@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mwondha.boxkuboxrider"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +20,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.mwondha.boxkuboxrider"
     },
     "web": {
       "output": "static",
@@ -37,6 +39,20 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      "expo-maps",
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiYm94a3Vib3giLCJhIjoiY21maHhvdzVlMGkxaTJtczluenUyMG1xbCJ9.fi2Xg_Yf4MD1ecUAj992cg"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Show current location on map.",
+          "locationAlwaysAndWhenInUsePermission": "Allow BoxKuBoxRider to use your location."
         }
       ]
     ],
